@@ -1,5 +1,6 @@
 # Next Level Week App
 
-- [x] day 1
-- [x] day 2 - Backend com NodeJS
-- [x] day 3 - Frontend Web com ReactJS
+- [x] Dia 1 - Conceitos e bootstrap dos projetos
+- [x] Dia 2 - Backend com NodeJS
+- [x] Dia 3 - Frontend Web com ReactJS
+- [x] Dia 4 - App Mobile com React Native + Expo
