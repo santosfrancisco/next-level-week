@@ -26,7 +26,7 @@ class PointsController {
     if (!point) return res.status(404).json({ message: 'Point not found' })
 
     const items = await knex('items')
-      .join('point_items', 'point_id', '=', 'items.id')
+      .join('point_items', 'item_id', '=', 'items.id')
       .where('point_items.point_id', id)
 
     point.items = items
