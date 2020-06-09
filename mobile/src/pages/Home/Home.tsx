@@ -1,27 +1,77 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
   Text,
   Image,
   ImageBackground,
-  TextInput,
+  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native'
 import {
   RectButton,
 } from 'react-native-gesture-handler'
+import RNPickerSelect from 'react-native-picker-select';
 import { Feather as Icon } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import axios from 'axios'
+
+interface UFResponse {
+  nome:	string
+  sigla: string
+}
+
+interface CityResponse {
+  nome: string
+}
+
+interface UF {
+  label:	string
+  value: string
+}
+
+interface City {
+  label: string
+  value: string
+}
+
 
 const Home = () => {
   const navigation = useNavigation()
 
-  const [uf, setUf] = useState('SP')
-  const [city, setCity] = useState('Santo André')
+  const [uf, setUf] = useState('')
+  const [city, setCity] = useState('')
+
+  const [ufs, setUfs] = useState<UF[]>([])
+  const [cities, setCities] = useState<City[]>([])
+
+  useEffect(() => {
+    axios.get<UFResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome')
+      .then(({ data }) => {
+        const IBGEUFs = data.map(uf => ({
+          label: uf.nome,
+          value: uf.sigla
+        }))
+        setUfs(IBGEUFs)
+      })
+  }, [])
+
+  useEffect(() => {
+    if(uf !== '') {
+      axios.get<CityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`)
+      .then(({ data }) => {
+        const IBGECities = data.map(city => ({
+          label: city.nome,
+          value: city.nome,
+        }))
+        setCities(IBGECities)
+      })
+    }
+  }, [ufs, uf])
 
   const handleNavigateToPoints = () => {
+    if(!uf || ! city) return Alert.alert('Ooops...', 'Por favor informe estado e cidade.')
     navigation.navigate('Points', { uf, city })
   }
   return (
@@ -42,20 +92,24 @@ const Home = () => {
           </View>
         </View>
         <View style={styles.footer}>
-          <TextInput 
-            style={styles.input}
-            placeholder="Infome o estado (UF)"
+          <RNPickerSelect 
+            style={pickerSelectStyles}
+            placeholder={{ label: "Selecione o Estado (UF)"}}
             value={uf}
-            maxLength={2}
-            autoCapitalize="characters"
-            onChangeText={setUf}
+            items={ufs}
+            onValueChange={city => setUf(city)}
+            useNativeAndroidPickerStyle={false}
+            Icon={() => <Icon name="chevron-down" color="#A0A0B2" size={24} />}
           />
-          <TextInput 
-            style={styles.input}
-            placeholder="Infome cidade"
+          <RNPickerSelect 
+            style={pickerSelectStyles}
+            placeholder={{ label: "Selecione a cidade"}}
+            disabled={!cities.length}
             value={city}
-            autoCorrect={false}
-            onChangeText={setCity}
+            items={cities}
+            onValueChange={(city) => setCity(city)}
+            useNativeAndroidPickerStyle={false}
+            Icon={() => <Icon name="chevron-down" color="#A0A0B2" size={24} />}
           />
           <RectButton style={styles.button} onPress={handleNavigateToPoints}>
             <View style={styles.buttonIcon}>
@@ -72,6 +126,32 @@ const Home = () => {
     </KeyboardAvoidingView>
   )
 }
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    height: 60,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    marginBottom: 8,
+    paddingHorizontal: 24,
+    fontSize: 16,
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    height: 60,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    marginBottom: 8,
+    paddingHorizontal: 24,
+    fontSize: 16,
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  iconContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 10
+  },
+});
+
 
 const styles = StyleSheet.create({
   container: {

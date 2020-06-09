@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
 
   mapMarkerContainer: {
     width: 90,
-    height: 70,
+    height: 80,
     backgroundColor: '#34CB79',
     flexDirection: 'column',
     borderRadius: 8,
@@ -214,10 +214,10 @@ const styles = StyleSheet.create({
 
   mapMarkerTitle: {
     flex: 1,
+    textAlign: 'center',
     fontFamily: 'Roboto_400Regular',
     color: '#FFF',
-    fontSize: 13,
-    lineHeight: 23,
+    fontSize: 14,
   },
 
   itemsContainer: {

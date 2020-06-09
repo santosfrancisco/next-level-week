@@ -36,7 +36,6 @@ const Details: React.FC = () => {
   useEffect(() => {
     api.get(`/points/${routeParams.point_id}`)
       .then(({ data }) => {
-      console.log("Details:React.FC -> data", data)
         setPoint(data)
       })
   }, [])
@@ -71,7 +70,7 @@ const Details: React.FC = () => {
         <Text style={styles.pointName}>{point.name}</Text>
         <Text style={styles.pointItems}>{point?.items?.map(item => item.title).join(', ')}</Text>
         <View style={styles.address}>
-          <Text style={styles.addressTitle}>Endereço</Text>
+          <Text style={styles.addressTitle}>Local</Text>
         <Text style={styles.addressContent}>{point.city}, {point.uf}</Text>
         </View>
       </View>
@@ -101,7 +100,7 @@ const styles = StyleSheet.create({
 
   pointImage: {
     width: '100%',
-    height: 120,
+    height: 300,
     resizeMode: 'cover',
     borderRadius: 10,
     marginTop: 32,
@@ -116,10 +115,11 @@ const styles = StyleSheet.create({
 
   pointItems: {
     fontFamily: 'Roboto_400Regular',
-    fontSize: 16,
-    lineHeight: 24,
-    marginTop: 8,
-    color: '#6C6C80'
+    fontStyle: 'normal',
+    fontWeight: '500',
+    fontSize: 20,
+    lineHeight: 30,
+    color: '#34CB79',
   },
 
   address: {
